@@ -22,3 +22,35 @@ output "firehose_stream_arn" {
   description = "ARN of the ingest Firehose delivery stream."
   value       = module.ingest.stream_arn
 }
+
+output "glue_databases" {
+  description = "Glue databases for the raw, staging, and curated layers."
+  value = {
+    raw     = module.catalog.raw_database_name
+    staging = module.catalog.staging_database_name
+    curated = module.catalog.curated_database_name
+  }
+}
+
+output "raw_events_table" {
+  description = "Canonical raw-events Glue table name."
+  value       = module.catalog.raw_events_table_name
+}
+
+output "curated_events_table" {
+  description = "Curated events Glue table name."
+  value       = module.catalog.curated_events_table_name
+}
+
+output "etl_job_name" {
+  description = "Name of the raw->curated PySpark ETL job."
+  value       = module.catalog.etl_job_name
+}
+
+output "glue_crawlers" {
+  description = "Names of the raw and curated Glue crawlers."
+  value = {
+    raw     = module.catalog.raw_crawler_name
+    curated = module.catalog.curated_crawler_name
+  }
+}

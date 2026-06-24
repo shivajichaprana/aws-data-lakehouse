@@ -92,3 +92,21 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "crawler_schedule" {
+  description = "Cron expression (UTC) controlling how often the Glue crawlers run."
+  type        = string
+  default     = "cron(0 1 * * ? *)"
+}
+
+variable "enable_etl_schedule" {
+  description = "Create a scheduled trigger that runs the raw->curated ETL job daily."
+  type        = bool
+  default     = true
+}
+
+variable "etl_job_schedule" {
+  description = "Cron expression (UTC) for the scheduled raw->curated ETL job trigger."
+  type        = string
+  default     = "cron(0 2 * * ? *)"
+}
