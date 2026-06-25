@@ -128,3 +128,63 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+# --------------------------- Lake Formation -------------------------------
+variable "data_lake_admin_arns" {
+  description = "IAM principal ARNs registered as Lake Formation administrators. Defaults to the deploying identity when empty."
+  type        = list(string)
+  default     = []
+}
+
+variable "trusted_resource_owners" {
+  description = "Account IDs trusted as resource owners for cross-account Lake Formation access."
+  type        = list(string)
+  default     = []
+}
+
+variable "enforce_lf_tag_access" {
+  description = "Remove the legacy IAMAllowedPrincipals Super grant so access is governed by Lake Formation. Set false to keep IAM-only access during migration."
+  type        = bool
+  default     = true
+}
+
+variable "register_s3_locations" {
+  description = "Register the raw/staging/curated bucket prefixes as Lake Formation data locations."
+  type        = bool
+  default     = true
+}
+
+variable "hybrid_access_enabled" {
+  description = "Keep IAM-based access working alongside Lake Formation grants on registered locations (hybrid access mode)."
+  type        = bool
+  default     = true
+}
+
+variable "registration_role_arn" {
+  description = "Optional IAM role Lake Formation assumes to access registered S3 locations. When null, the Lake Formation service-linked role is used."
+  type        = string
+  default     = null
+}
+
+variable "confidential_columns" {
+  description = "Curated events columns tagged sensitivity=confidential (filtered out of analyst grants by column-level security)."
+  type        = list(string)
+  default     = ["user_id", "session_id"]
+
+  validation {
+    condition     = length(var.confidential_columns) > 0
+    error_message = "confidential_columns must list at least one column."
+  }
+}
+
+variable "data_analyst_principal_arn" {
+  description = "Optional IAM principal granted read access to curated, non-confidential data via LF-Tag expressions. No grant is created when null."
+  type        = string
+  default     = null
+}
+
+variable "data_engineer_principal_arn" {
+  description = "Optional IAM principal granted read/write access across staging + curated (all sensitivities) via LF-Tag expressions. No grant is created when null."
+  type        = string
+  default     = null
+}

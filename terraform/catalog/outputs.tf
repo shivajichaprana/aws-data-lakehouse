@@ -52,3 +52,21 @@ output "security_configuration_name" {
   description = "Glue security configuration encrypting catalog output, bookmarks, and logs."
   value       = aws_glue_security_configuration.this.name
 }
+
+output "lf_tag_keys" {
+  description = "Lake Formation tag keys defined for tag-based access control."
+  value = {
+    layer       = aws_lakeformation_lf_tag.layer.key
+    sensitivity = aws_lakeformation_lf_tag.sensitivity.key
+  }
+}
+
+output "registered_data_locations" {
+  description = "Bucket ARNs registered with Lake Formation as data locations."
+  value       = [for r in aws_lakeformation_resource.data_location : r.arn]
+}
+
+output "data_lake_admins" {
+  description = "Principal ARNs registered as Lake Formation administrators."
+  value       = aws_lakeformation_data_lake_settings.this.admins
+}
