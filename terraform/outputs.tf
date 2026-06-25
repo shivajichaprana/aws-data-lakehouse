@@ -54,3 +54,23 @@ output "glue_crawlers" {
     curated = module.catalog.curated_crawler_name
   }
 }
+
+output "athena_workgroup_name" {
+  description = "Name of the Athena workgroup for curated-layer analytics."
+  value       = module.query.workgroup_name
+}
+
+output "athena_results_bucket" {
+  description = "Bucket id holding Athena query results."
+  value       = module.query.results_bucket_id
+}
+
+output "athena_named_queries" {
+  description = "Map of saved Athena named-query name -> id."
+  value       = module.query.named_query_ids
+}
+
+output "lake_formation_admins" {
+  description = "Principal ARNs registered as Lake Formation administrators."
+  value       = module.catalog.data_lake_admins
+}

@@ -39,6 +39,13 @@ module "catalog" {
   enable_job_schedule = var.enable_etl_schedule
   job_schedule        = var.etl_job_schedule
 
+  # Lake Formation governance (Day 87): admins, tag-based access, registration.
+  data_lake_admin_arns        = var.data_lake_admin_arns
+  data_analyst_principal_arn  = var.data_analyst_principal_arn
+  data_engineer_principal_arn = var.data_engineer_principal_arn
+  enforce_lf_tag_access       = var.enforce_lf_tag_access
+  register_s3_locations       = var.register_s3_locations
+
   tags = var.tags
 }
 
@@ -61,6 +68,25 @@ module "ingest" {
   enable_parquet_conversion = var.enable_parquet_conversion
   glue_database_name        = module.catalog.raw_database_name
   glue_table_name           = module.catalog.raw_events_table_name
+
+  tags = var.tags
+}
+
+module "query" {
+  source = "./query"
+
+  project     = var.project
+  environment = var.environment
+
+  kms_key_arn           = module.storage.kms_key_arn
+  access_logs_bucket_id = module.storage.access_logs_bucket_id
+
+  # Athena queries target the curated layer produced by the catalog ETL job.
+  curated_database_name = module.catalog.curated_database_name
+  curated_table_name    = module.catalog.curated_events_table_name
+
+  force_destroy         = var.force_destroy_buckets
+  result_retention_days = var.athena_result_retention_days
 
   tags = var.tags
 }

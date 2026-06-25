@@ -110,3 +110,44 @@ variable "etl_job_schedule" {
   type        = string
   default     = "cron(0 2 * * ? *)"
 }
+
+variable "data_lake_admin_arns" {
+  description = "IAM principal ARNs registered as Lake Formation administrators. Defaults to the deploying identity when empty."
+  type        = list(string)
+  default     = []
+}
+
+variable "data_analyst_principal_arn" {
+  description = "Optional analyst principal granted curated, non-confidential read access via Lake Formation LF-Tags. No grant when null."
+  type        = string
+  default     = null
+}
+
+variable "data_engineer_principal_arn" {
+  description = "Optional engineer principal granted staging + curated read/write via Lake Formation LF-Tags. No grant when null."
+  type        = string
+  default     = null
+}
+
+variable "enforce_lf_tag_access" {
+  description = "Remove the legacy IAMAllowedPrincipals Super grant so catalog access is governed by Lake Formation."
+  type        = bool
+  default     = true
+}
+
+variable "register_s3_locations" {
+  description = "Register the raw/staging/curated bucket prefixes as Lake Formation data locations."
+  type        = bool
+  default     = true
+}
+
+variable "athena_result_retention_days" {
+  description = "Days after which Athena query results in the results bucket expire."
+  type        = number
+  default     = 30
+
+  validation {
+    condition     = var.athena_result_retention_days >= 1
+    error_message = "athena_result_retention_days must be at least 1."
+  }
+}
