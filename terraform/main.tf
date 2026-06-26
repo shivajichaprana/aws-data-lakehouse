@@ -108,3 +108,30 @@ module "viz" {
 
   tags = var.tags
 }
+
+module "quality" {
+  source = "./quality"
+
+  project     = var.project
+  environment = var.environment
+
+  curated_database_name = module.catalog.curated_database_name
+  curated_table_name    = module.catalog.curated_events_table_name
+
+  curated_bucket_id  = module.storage.bucket_ids["curated"]
+  curated_bucket_arn = module.storage.bucket_arns["curated"]
+  staging_bucket_id  = module.storage.bucket_ids["staging"]
+  staging_bucket_arn = module.storage.bucket_arns["staging"]
+  kms_key_arn        = module.storage.kms_key_arn
+
+  # Reuse the catalog's Glue security configuration (same lake CMK posture).
+  security_configuration_name = module.catalog.security_configuration_name
+
+  deequ_jar_s3_uri    = var.deequ_jar_s3_uri
+  enable_job_schedule = var.enable_quality_schedule
+  job_schedule        = var.quality_job_schedule
+  allowed_event_types = var.allowed_event_types
+  alarm_email         = var.quality_alarm_email
+
+  tags = var.tags
+}

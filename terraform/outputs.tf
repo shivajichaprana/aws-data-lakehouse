@@ -89,3 +89,23 @@ output "quicksight_dataset_id" {
   description = "Id of the curated SPICE dataset (null when QuickSight is disabled)."
   value       = module.viz.data_set_id
 }
+
+output "data_quality_job_name" {
+  description = "Name of the PyDeequ data-quality Glue job."
+  value       = module.quality.job_name
+}
+
+output "data_quality_alerts_topic_arn" {
+  description = "ARN of the SNS topic receiving data-quality alarm notifications."
+  value       = module.quality.alerts_topic_arn
+}
+
+output "data_quality_alarm_names" {
+  description = "Names of the data-quality CloudWatch alarms."
+  value       = module.quality.alarm_names
+}
+
+output "data_quality_results_path" {
+  description = "S3 URI prefix where data-quality verification results are persisted."
+  value       = module.quality.results_path
+}

@@ -164,3 +164,34 @@ variable "quicksight_principal_arn" {
   type        = string
   default     = null
 }
+
+# --------------------------- Data quality (PyDeequ) -----------------------
+variable "enable_quality_schedule" {
+  description = "Create a scheduled trigger that runs the data-quality job daily after the curated ETL."
+  type        = bool
+  default     = true
+}
+
+variable "quality_job_schedule" {
+  description = "Cron expression (UTC) for the scheduled data-quality job."
+  type        = string
+  default     = "cron(0 3 * * ? *)"
+}
+
+variable "deequ_jar_s3_uri" {
+  description = "S3 URI of the Deequ assembly jar (matching the Glue Spark version) added to the quality job classpath. The job plans without it; PyDeequ needs it at runtime."
+  type        = string
+  default     = null
+}
+
+variable "quality_alarm_email" {
+  description = "Optional email subscribed to the data-quality alerts SNS topic."
+  type        = string
+  default     = null
+}
+
+variable "allowed_event_types" {
+  description = "Optional closed set of valid event_type values asserted by the data-quality job. Empty disables the membership check."
+  type        = list(string)
+  default     = []
+}
