@@ -74,3 +74,18 @@ output "lake_formation_admins" {
   description = "Principal ARNs registered as Lake Formation administrators."
   value       = module.catalog.data_lake_admins
 }
+
+output "quicksight_dashboard_id" {
+  description = "Id of the curated QuickSight dashboard (null when QuickSight is disabled)."
+  value       = module.viz.dashboard_id
+}
+
+output "quicksight_dashboard_arn" {
+  description = "ARN of the curated QuickSight dashboard (null when QuickSight is disabled)."
+  value       = module.viz.dashboard_arn
+}
+
+output "quicksight_dataset_id" {
+  description = "Id of the curated SPICE dataset (null when QuickSight is disabled)."
+  value       = module.viz.data_set_id
+}

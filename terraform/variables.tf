@@ -151,3 +151,16 @@ variable "athena_result_retention_days" {
     error_message = "athena_result_retention_days must be at least 1."
   }
 }
+
+# --------------------------- Visualization (QuickSight) -------------------
+variable "enable_quicksight" {
+  description = "Provision the QuickSight BI layer (data source, SPICE dataset, dashboard). Requires an active QuickSight subscription in this region."
+  type        = bool
+  default     = false
+}
+
+variable "quicksight_principal_arn" {
+  description = "QuickSight user/group ARN that owns the BI assets. Required (non-null) for any QuickSight resource to be created."
+  type        = string
+  default     = null
+}

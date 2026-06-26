@@ -90,3 +90,21 @@ module "query" {
 
   tags = var.tags
 }
+
+module "viz" {
+  source = "./viz"
+
+  project     = var.project
+  environment = var.environment
+
+  # QuickSight BI over the curated layer, through the Athena workgroup. Gated
+  # off by default so a baseline plan needs no QuickSight subscription.
+  enable_quicksight        = var.enable_quicksight
+  quicksight_principal_arn = var.quicksight_principal_arn
+
+  athena_workgroup_name = module.query.workgroup_name
+  curated_database_name = module.catalog.curated_database_name
+  curated_table_name    = module.catalog.curated_events_table_name
+
+  tags = var.tags
+}
