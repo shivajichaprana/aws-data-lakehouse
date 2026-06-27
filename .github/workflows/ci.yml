@@ -1,0 +1,192 @@
+###############################################################################
+# CI pipeline for aws-data-lakehouse
+#
+# Runs on every push and pull request to main. Three independent jobs run in
+# parallel, and a final gate job summarises the result so branch protection
+# can require a single check:
+#
+#   1. terraform     fmt + init(-backend=false) + validate + tflint + checkov
+#   2. pyspark-lint  flake8 (critical subset) + py_compile on the Glue/PySpark
+#                    scripts and the boto3 producer
+#   3. pytest        unit tests for any Lambda/handler code (guarded — runs
+#                    only when a tests/ directory is present)
+#
+# Action versions are pinned to immutable commit SHAs (the trailing comment
+# records the human-readable tag).
+###############################################################################
+name: data-lakehouse-ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: data-lakehouse-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  TF_VERSION: "1.9.8"
+  TFLINT_VERSION: "v0.53.0"
+  CHECKOV_VERSION: "3.2.257"
+  PYTHON_VERSION: "3.12"
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # 1. Terraform: formatting, validation, lint, and IaC security scan
+  # ---------------------------------------------------------------------------
+  terraform:
+    name: terraform
+    runs-on: ubuntu-22.04
+    timeout-minutes: 12
+    defaults:
+      run:
+        working-directory: terraform
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd # v3.1.2
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+          terraform_wrapper: false
+
+      - name: terraform fmt -check
+        run: terraform fmt -check -recursive -diff
+
+      - name: terraform init (no backend)
+        run: terraform init -backend=false -input=false
+
+      - name: terraform validate
+        run: terraform validate -no-color
+
+      - name: Cache tflint plugins
+        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
+        with:
+          path: ~/.tflint.d/plugins
+          key: tflint-${{ runner.os }}-${{ env.TFLINT_VERSION }}-${{ hashFiles('terraform/.tflint.hcl') }}
+
+      - name: Setup TFLint
+        uses: terraform-linters/setup-tflint@19a52fbac37dacb22a09518e4ef6ee234f2d4987 # v4.0.0
+        with:
+          tflint_version: ${{ env.TFLINT_VERSION }}
+
+      - name: Run TFLint
+        run: |
+          tflint --init
+          tflint --recursive --format compact
+
+      - name: Setup Python (for checkov)
+        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+
+      - name: Install Checkov
+        run: pip install "checkov==${CHECKOV_VERSION}"
+
+      - name: Run Checkov on Terraform
+        working-directory: ${{ github.workspace }}
+        run: |
+          checkov \
+            --directory terraform \
+            --framework terraform \
+            --quiet \
+            --compact \
+            --soft-fail-on LOW,MEDIUM
+
+  # ---------------------------------------------------------------------------
+  # 2. PySpark / Python lint: catch real errors (syntax, undefined names)
+  # ---------------------------------------------------------------------------
+  pyspark-lint:
+    name: pyspark-lint
+    runs-on: ubuntu-22.04
+    timeout-minutes: 6
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Setup Python
+        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+
+      - name: Install linters
+        run: pip install flake8
+
+      - name: Compile-check all Python sources
+        run: |
+          set -euo pipefail
+          mapfile -t files < <(git ls-files '*.py')
+          echo "Compiling ${#files[@]} Python file(s):"
+          printf '  %s\n' "${files[@]}"
+          python -m py_compile "${files[@]}"
+
+      - name: flake8 (syntax errors + undefined names)
+        run: |
+          # E9 (runtime/syntax), F63/F7 (logic), F82 (undefined name) are the
+          # checks that catch genuine bugs. Style-only findings are reported
+          # but never fail the build.
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          flake8 . --count --exit-zero --max-line-length=120 --statistics
+
+  # ---------------------------------------------------------------------------
+  # 3. Pytest: Lambda/handler unit tests (runs only when tests/ exists)
+  # ---------------------------------------------------------------------------
+  pytest:
+    name: pytest
+    runs-on: ubuntu-22.04
+    timeout-minutes: 8
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Setup Python
+        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+
+      - name: Run pytest if a test suite is present
+        env:
+          AWS_DEFAULT_REGION: us-east-1
+          AWS_ACCESS_KEY_ID: testing
+          AWS_SECRET_ACCESS_KEY: testing
+        run: |
+          set -euo pipefail
+          if [ -d tests ]; then
+            if [ -f tests/requirements.txt ]; then
+              pip install -r tests/requirements.txt
+            else
+              pip install pytest
+            fi
+            pytest tests/ -v --tb=short
+          else
+            echo "No tests/ directory yet — skipping pytest."
+          fi
+
+  # ---------------------------------------------------------------------------
+  # Gate: a single required check that depends on the others
+  # ---------------------------------------------------------------------------
+  ci-complete:
+    name: ci-complete
+    runs-on: ubuntu-22.04
+    needs: [terraform, pyspark-lint, pytest]
+    if: always()
+    steps:
+      - name: Verify all jobs succeeded
+        run: |
+          if [ "${{ needs.terraform.result }}" != "success" ] || \
+             [ "${{ needs.pyspark-lint.result }}" != "success" ] || \
+             [ "${{ needs.pytest.result }}" != "success" ]; then
+            echo "One or more CI jobs failed."
+            exit 1
+          fi
+          echo "All CI jobs passed."
