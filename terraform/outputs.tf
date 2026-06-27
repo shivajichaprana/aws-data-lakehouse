@@ -109,3 +109,28 @@ output "data_quality_results_path" {
   description = "S3 URI prefix where data-quality verification results are persisted."
   value       = module.quality.results_path
 }
+
+output "pipeline_state_machine_arn" {
+  description = "ARN of the daily orchestration Step Functions state machine."
+  value       = module.orchestration.state_machine_arn
+}
+
+output "pipeline_state_machine_name" {
+  description = "Name of the daily orchestration Step Functions state machine."
+  value       = module.orchestration.state_machine_name
+}
+
+output "pipeline_alerts_topic_arn" {
+  description = "ARN of the SNS topic notified on pipeline failure."
+  value       = module.orchestration.alerts_topic_arn
+}
+
+output "pipeline_schedule_name" {
+  description = "Name of the EventBridge schedule driving the pipeline (null when disabled)."
+  value       = module.orchestration.schedule_name
+}
+
+output "pipeline_dashboard_refresh_enabled" {
+  description = "Whether the pipeline includes a QuickSight SPICE refresh step."
+  value       = module.orchestration.dashboard_refresh_enabled
+}

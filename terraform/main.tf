@@ -135,3 +135,31 @@ module "quality" {
 
   tags = var.tags
 }
+
+module "orchestration" {
+  source = "./orchestration"
+
+  project     = var.project
+  environment = var.environment
+
+  # Pipeline step targets, by name, from the upstream modules.
+  raw_crawler_name = module.catalog.raw_crawler_name
+  etl_job_name     = module.catalog.etl_job_name
+  quality_job_name = module.quality.job_name
+
+  # Append a QuickSight SPICE refresh when the BI dataset exists (null when
+  # QuickSight is disabled, which drops the refresh step automatically).
+  enable_dashboard_refresh = var.enable_dashboard_refresh
+  quicksight_data_set_id   = module.viz.data_set_id
+
+  # Daily cadence, sequenced after the curated-ETL and quality job windows.
+  enable_schedule   = var.enable_pipeline_schedule
+  pipeline_schedule = var.pipeline_schedule
+
+  alarm_email = var.pipeline_alarm_email
+
+  log_retention_days  = var.log_retention_days
+  enable_xray_tracing = var.enable_pipeline_xray
+
+  tags = var.tags
+}

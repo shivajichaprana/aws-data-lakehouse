@@ -195,3 +195,34 @@ variable "allowed_event_types" {
   type        = list(string)
   default     = []
 }
+
+# --------------------------- Orchestration (Step Functions) ---------------
+variable "enable_dashboard_refresh" {
+  description = "Append a QuickSight SPICE refresh to the daily pipeline. Effective only when QuickSight is enabled (a dataset exists)."
+  type        = bool
+  default     = true
+}
+
+variable "enable_pipeline_schedule" {
+  description = "Create the EventBridge schedule that runs the end-to-end pipeline daily."
+  type        = bool
+  default     = true
+}
+
+variable "pipeline_schedule" {
+  description = "Schedule expression (UTC by default) for the daily pipeline. Default 04:00, after the crawler/ETL/quality windows."
+  type        = string
+  default     = "cron(0 4 * * ? *)"
+}
+
+variable "pipeline_alarm_email" {
+  description = "Optional email subscribed to the pipeline-failure SNS topic."
+  type        = string
+  default     = null
+}
+
+variable "enable_pipeline_xray" {
+  description = "Enable AWS X-Ray tracing on the pipeline state machine."
+  type        = bool
+  default     = true
+}
