@@ -18,7 +18,7 @@ Job arguments
 --curated_table     Curated table name (must already exist).
 --curated_path      S3 URI prefix for curated Parquet output.
 --quarantine_path   S3 URI prefix for quarantined raw records (JSON).
---process_date      Ingest date to process as YYYY-MM-DD. Empty => yesterday (UTC).
+--process_date      Ingest date to process as YYYY-MM-DD. Empty => prior UTC date.
 """
 
 from __future__ import annotations
@@ -68,7 +68,7 @@ REQUIRED_ARGS: List[str] = [
 def resolve_process_date(raw_value: str) -> Tuple[str, str, str]:
     """Return ``(year, month, day)`` zero-padded strings for the target date.
 
-    An empty ``raw_value`` defaults to yesterday (UTC), which is the natural
+    An empty ``raw_value`` defaults to the prior UTC date, which is the natural
     target for a job scheduled in the early hours after a day has fully landed.
     """
     if raw_value and raw_value.strip():

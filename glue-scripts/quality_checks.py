@@ -22,7 +22,7 @@ Job arguments
 --metric_namespace         CloudWatch namespace for custom metrics.
 --metric_job_name          Value of the JobName metric dimension.
 --region                   AWS region for the CloudWatch client.
---process_date             Ingest date YYYY-MM-DD. Empty => yesterday (UTC).
+--process_date             Ingest date YYYY-MM-DD. Empty => prior UTC date.
 --fail_on_error            "true"/"false": fail the run on error-level failures.
 --required_completeness    Min completeness (0-1) for mandatory columns.
 --min_user_id_completeness Min completeness (0-1) for user_id (warning level).
@@ -77,7 +77,7 @@ REQUIRED_ARGS: List[str] = [
 def resolve_process_date(raw_value: str) -> Tuple[str, str, str]:
     """Return ``(year, month, day)`` zero-padded strings for the target date.
 
-    An empty value defaults to yesterday (UTC) - the partition a quality job
+    An empty value defaults to the prior UTC date - the partition a quality job
     scheduled in the early hours should verify once the day has fully landed.
     """
     if raw_value and raw_value.strip():

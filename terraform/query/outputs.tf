@@ -22,7 +22,7 @@ output "named_query_ids" {
   description = "Map of saved named-query name -> Athena named-query id."
   value = {
     daily_event_counts   = aws_athena_named_query.daily_event_counts.id
-    revenue_by_day       = aws_athena_named_query.revenue_by_day.id
+    revenue_by_date      = aws_athena_named_query.revenue_by_date.id
     top_skus_by_quantity = aws_athena_named_query.top_skus_by_quantity.id
     top_search_queries   = aws_athena_named_query.top_search_queries.id
     daily_active_users   = aws_athena_named_query.daily_active_users.id

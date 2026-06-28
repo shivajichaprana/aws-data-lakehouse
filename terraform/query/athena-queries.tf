@@ -25,8 +25,8 @@ resource "aws_athena_named_query" "daily_event_counts" {
   SQL
 }
 
-resource "aws_athena_named_query" "revenue_by_day" {
-  name        = "${local.name_prefix}-revenue-by-day"
+resource "aws_athena_named_query" "revenue_by_date" {
+  name        = "${local.name_prefix}-revenue-by-date"
   description = "Daily purchase revenue, order count, and average order value."
   database    = var.curated_database_name
   workgroup   = aws_athena_workgroup.this.id

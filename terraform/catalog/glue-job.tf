@@ -121,7 +121,7 @@ resource "aws_glue_job" "raw_to_curated" {
     max_concurrent_runs = var.max_concurrent_runs
   }
 
-  # Job arguments. --process_date is overridable per run; empty means "yesterday".
+  # Job arguments. --process_date is overridable per run; empty means "the prior date".
   default_arguments = {
     "--job-language"                     = "python"
     "--job-bookmark-option"              = "job-bookmark-enable"

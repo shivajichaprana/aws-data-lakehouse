@@ -21,7 +21,7 @@ variable "force_destroy" {
 }
 
 variable "raw_lifecycle" {
-  description = "Day-based lifecycle schedule for the raw layer."
+  description = "Date-based lifecycle schedule for the raw layer."
   type = object({
     transition_ia_days      = number
     transition_glacier_days = number

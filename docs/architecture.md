@@ -86,7 +86,7 @@ true, and the three bucket prefixes are registered as data locations.
 An Athena workgroup enforces a KMS-encrypted result location, publishes
 CloudWatch metrics, and can cap bytes scanned per query. Eight named queries
 ship over the curated `events` table, each pruning on partition columns where
-possible: daily event counts, revenue by day, top SKUs by quantity, top search
+possible: daily event counts, revenue by date, top SKUs by quantity, top search
 queries, daily active users, events by country, hourly event rate, and a
 partition-freshness check.
 

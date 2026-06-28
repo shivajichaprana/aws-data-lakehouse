@@ -295,7 +295,7 @@ resource "aws_quicksight_dashboard" "curated" {
               line_chart_aggregated_field_wells {
                 category {
                   date_dimension_field {
-                    field_id         = "line-event-day"
+                    field_id         = "line-event-date"
                     date_granularity = "DAY"
                     column {
                       data_set_identifier = "curated"
