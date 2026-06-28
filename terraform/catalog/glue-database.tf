@@ -114,8 +114,8 @@ resource "aws_glue_catalog_table" "raw_events" {
 }
 
 # --------------------------- Curated events table -------------------------
-# Flattened, strongly typed Parquet written by the ETL job. Day 87 layers
-# Lake Formation permissions and Athena queries on top of this table.
+# Flattened, strongly typed Parquet written by the ETL job. Lake Formation
+# permissions and Athena queries layer on top of this table.
 resource "aws_glue_catalog_table" "curated_events" {
   database_name = aws_glue_catalog_database.curated.name
   name          = local.curated_table

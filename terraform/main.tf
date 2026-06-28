@@ -39,7 +39,7 @@ module "catalog" {
   enable_job_schedule = var.enable_etl_schedule
   job_schedule        = var.etl_job_schedule
 
-  # Lake Formation governance (Day 87): admins, tag-based access, registration.
+  # Lake Formation governance: admins, tag-based access, registration.
   data_lake_admin_arns        = var.data_lake_admin_arns
   data_analyst_principal_arn  = var.data_analyst_principal_arn
   data_engineer_principal_arn = var.data_engineer_principal_arn
