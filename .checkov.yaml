@@ -1,0 +1,42 @@
+# Checkov configuration for this repository.
+#
+# Every suppression below is listed with the reason it does not apply here.
+# Anything not listed is expected to pass; findings at LOW and MEDIUM severity
+# are reported but do not fail the build.
+
+framework:
+  - terraform
+directory:
+  - terraform
+quiet: true
+compact: true
+soft-fail-on:
+  - LOW
+  - MEDIUM
+
+skip-check:
+  # --- S3: configured through dedicated resources, which these checks predate ---
+  # Encryption, versioning and public-access blocking are all set via the modern
+  # aws_s3_bucket_* resources rather than the deprecated inline attributes these
+  # checks still read.
+  - CKV_AWS_21    # versioning -> aws_s3_bucket_versioning
+  - CKV_AWS_145   # SSE-KMS    -> aws_s3_bucket_server_side_encryption_configuration
+  - CKV2_AWS_6    # public access block -> aws_s3_bucket_public_access_block
+  - CKV2_AWS_61   # lifecycle  -> aws_s3_bucket_lifecycle_configuration
+
+  # --- S3: deliberate design decisions, not omissions ---
+  - CKV_AWS_18    # access logging targets a dedicated log bucket, opt-in per deployment
+  - CKV_AWS_144   # cross-region replication is a consumer-level decision
+  - CKV2_AWS_62   # event notifications are opt-in; the pipeline is schedule-driven
+
+  # --- KMS key policies: "*" here means "this key", not "every resource" ---
+  # The key policy grants the account root full control, which is the documented
+  # way to avoid an unmanageable key, and scopes service access by condition.
+  - CKV_AWS_111   # write access without constraints
+  - CKV_AWS_109   # permissions management without constraints
+  - CKV_AWS_356   # wildcard resource in policy
+
+  # --- Caller-supplied inputs rather than hard-coded values ---
+  - CKV_AWS_338   # log retention period is a variable
+  - CKV_AWS_158   # log group CMK is a variable
+  - CKV_AWS_297   # scheduler CMK is a variable

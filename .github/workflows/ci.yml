@@ -93,12 +93,7 @@ jobs:
       - name: Run Checkov on Terraform
         working-directory: ${{ github.workspace }}
         run: |
-          checkov \
-            --directory terraform \
-            --framework terraform \
-            --quiet \
-            --compact \
-            --soft-fail-on LOW,MEDIUM
+          checkov --config-file .checkov.yaml
 
   # ---------------------------------------------------------------------------
   # 2. PySpark / Python lint: catch real errors (syntax, undefined names)
