@@ -145,7 +145,7 @@ resource "aws_quicksight_dashboard" "curated" {
   aws_account_id      = local.account_id
   dashboard_id        = local.dashboard_id
   name                = "${local.name_prefix} curated overview"
-  version_description  = "Curated lakehouse overview: volume, mix, and trend."
+  version_description = "Curated lakehouse overview: volume, mix, and trend."
 
   dashboard_publish_options {
     ad_hoc_filtering_option {
@@ -271,7 +271,7 @@ resource "aws_quicksight_dashboard" "curated" {
 
             sort_configuration {
               category_items_limit {
-                items_limit = 20
+                items_limit      = 20
                 other_categories = "INCLUDE"
               }
             }

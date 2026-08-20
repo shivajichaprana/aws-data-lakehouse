@@ -11,9 +11,9 @@
 # --------------------------- ETL script asset -----------------------------
 # Ship the PySpark script to the staging bucket under a non-data prefix.
 resource "aws_s3_object" "etl_script" {
-  bucket = var.staging_bucket_id
-  key    = "assets/glue/raw_to_curated.py"
-  source = "${path.module}/../../glue-scripts/raw_to_curated.py"
+  bucket      = var.staging_bucket_id
+  key         = "assets/glue/raw_to_curated.py"
+  source      = "${path.module}/../../glue-scripts/raw_to_curated.py"
   source_hash = filemd5("${path.module}/../../glue-scripts/raw_to_curated.py")
 
   # Bucket default SSE-KMS (lake CMK) applies; tag for housekeeping.

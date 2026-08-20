@@ -88,9 +88,9 @@ data "aws_iam_policy_document" "quality_inline" {
 
   # Publish custom data-quality metrics, scoped to the configured namespace.
   statement {
-    sid    = "PublishQualityMetrics"
-    effect = "Allow"
-    actions = ["cloudwatch:PutMetricData"]
+    sid       = "PublishQualityMetrics"
+    effect    = "Allow"
+    actions   = ["cloudwatch:PutMetricData"]
     resources = ["*"]
 
     condition {

@@ -24,9 +24,9 @@ resource "aws_sns_topic" "alerts" {
 # Allow CloudWatch alarms in this account to publish to the topic.
 data "aws_iam_policy_document" "alerts_topic" {
   statement {
-    sid     = "AllowCloudWatchAlarms"
-    effect  = "Allow"
-    actions = ["sns:Publish"]
+    sid       = "AllowCloudWatchAlarms"
+    effect    = "Allow"
+    actions   = ["sns:Publish"]
     resources = [aws_sns_topic.alerts.arn]
 
     principals {

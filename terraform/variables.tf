@@ -77,8 +77,8 @@ variable "enable_parquet_conversion" {
     until the Glue catalog (catalog module) exists; raw lands as GZIP JSON by
     default, and the raw->curated job produces Parquet downstream.
   DESC
-  type        = bool
-  default     = false
+  type    = bool
+  default = false
 }
 
 variable "log_retention_days" {
