@@ -45,8 +45,8 @@ resource "aws_glue_catalog_table" "raw_events" {
   table_type    = "EXTERNAL_TABLE"
 
   parameters = {
-    EXTERNAL       = "TRUE"
-    classification = "json"
+    EXTERNAL                 = "TRUE"
+    classification           = "json"
     "partition_filtering"    = "true"
     "projection.enabled"     = "false"
     "compressionType"        = "gzip"
@@ -123,8 +123,8 @@ resource "aws_glue_catalog_table" "curated_events" {
   table_type    = "EXTERNAL_TABLE"
 
   parameters = {
-    EXTERNAL       = "TRUE"
-    classification = "parquet"
+    EXTERNAL              = "TRUE"
+    classification        = "parquet"
     "partition_filtering" = "true"
     "parquet.compression" = "SNAPPY"
   }

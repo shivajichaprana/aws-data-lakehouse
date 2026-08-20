@@ -66,7 +66,7 @@ locals {
   # When a jar URI is supplied, put it (and our wrapper) ahead of Glue's
   # bundled jars on the classpath.
   deequ_jar_arguments = var.deequ_jar_s3_uri == null ? {} : {
-    "--extra-jars"     = var.deequ_jar_s3_uri
+    "--extra-jars"      = var.deequ_jar_s3_uri
     "--user-jars-first" = "true"
   }
 

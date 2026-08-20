@@ -178,8 +178,8 @@ locals {
       Comment  = "Publish the failing execution payload to SNS, then fail the run."
       Resource = "arn:aws:states:::sns:publish"
       Parameters = {
-        TopicArn = aws_sns_topic.alerts.arn
-        Subject  = "[${local.state_machine_name}] data pipeline FAILED"
+        TopicArn    = aws_sns_topic.alerts.arn
+        Subject     = "[${local.state_machine_name}] data pipeline FAILED"
         "Message.$" = "States.JsonToString($)"
       }
       ResultPath = "$.notification"
@@ -204,10 +204,10 @@ locals {
       Comment  = "Kick off a full SPICE refresh of the curated dataset that backs the dashboard."
       Resource = "arn:aws:states:::aws-sdk:quicksight:createIngestion"
       Parameters = {
-        AwsAccountId = local.account_id
-        DataSetId    = var.quicksight_data_set_id
+        AwsAccountId    = local.account_id
+        DataSetId       = var.quicksight_data_set_id
         "IngestionId.$" = "States.UUID()"
-        IngestionType = "FULL_REFRESH"
+        IngestionType   = "FULL_REFRESH"
       }
       ResultPath = "$.ingestion"
       Retry      = local.transient_retry

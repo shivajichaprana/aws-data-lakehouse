@@ -131,13 +131,13 @@ resource "aws_glue_job" "raw_to_curated" {
     "--enable-spark-ui"                  = "false"
     "--enable-glue-datacatalog"          = "true"
 
-    "--raw_database"   = aws_glue_catalog_database.raw.name
-    "--raw_table"      = aws_glue_catalog_table.raw_events.name
-    "--curated_db"     = aws_glue_catalog_database.curated.name
-    "--curated_table"  = aws_glue_catalog_table.curated_events.name
-    "--curated_path"   = "s3://${var.curated_bucket_id}/${local.events_prefix}/"
+    "--raw_database"    = aws_glue_catalog_database.raw.name
+    "--raw_table"       = aws_glue_catalog_table.raw_events.name
+    "--curated_db"      = aws_glue_catalog_database.curated.name
+    "--curated_table"   = aws_glue_catalog_table.curated_events.name
+    "--curated_path"    = "s3://${var.curated_bucket_id}/${local.events_prefix}/"
     "--quarantine_path" = "s3://${var.staging_bucket_id}/quarantine/${local.events_prefix}/"
-    "--process_date"   = ""
+    "--process_date"    = ""
 
     "--TempDir" = "s3://${var.staging_bucket_id}/glue-temp/"
   }
