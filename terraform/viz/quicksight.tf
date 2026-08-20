@@ -33,7 +33,7 @@ resource "aws_quicksight_data_source" "athena" {
     disable_ssl = false
   }
 
-  permissions {
+  permission {
     principal = var.quicksight_principal_arn
     actions = [
       "quicksight:DescribeDataSource",
@@ -99,7 +99,7 @@ resource "aws_quicksight_data_set" "curated" {
     }
   }
 
-  permissions {
+  permission {
     principal = var.quicksight_principal_arn
     actions = [
       "quicksight:DescribeDataSet",
@@ -323,7 +323,7 @@ resource "aws_quicksight_dashboard" "curated" {
     }
   }
 
-  permissions {
+  permission {
     principal = var.quicksight_principal_arn
     actions = [
       "quicksight:DescribeDashboard",
