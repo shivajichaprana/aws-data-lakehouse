@@ -99,7 +99,7 @@ resource "aws_quicksight_data_set" "curated" {
     }
   }
 
-  permission {
+  permissions {
     principal = var.quicksight_principal_arn
     actions = [
       "quicksight:DescribeDataSet",
@@ -323,7 +323,7 @@ resource "aws_quicksight_dashboard" "curated" {
     }
   }
 
-  permission {
+  permissions {
     principal = var.quicksight_principal_arn
     actions = [
       "quicksight:DescribeDashboard",
