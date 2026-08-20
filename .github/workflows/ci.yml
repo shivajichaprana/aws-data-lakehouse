@@ -67,7 +67,7 @@ jobs:
         run: terraform validate -no-color
 
       - name: Cache tflint plugins
-        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
+        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4.2.4
         with:
           path: ~/.tflint.d/plugins
           key: tflint-${{ runner.os }}-${{ env.TFLINT_VERSION }}-${{ hashFiles('terraform/.tflint.hcl') }}
@@ -86,7 +86,6 @@ jobs:
         uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
         with:
           python-version: ${{ env.PYTHON_VERSION }}
-          cache: pip
 
       - name: Install Checkov
         run: pip install "checkov==${CHECKOV_VERSION}"
@@ -116,7 +115,6 @@ jobs:
         uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
         with:
           python-version: ${{ env.PYTHON_VERSION }}
-          cache: pip
 
       - name: Install linters
         run: pip install flake8
@@ -152,7 +150,6 @@ jobs:
         uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
         with:
           python-version: ${{ env.PYTHON_VERSION }}
-          cache: pip
 
       - name: Run pytest if a test suite is present
         env:
